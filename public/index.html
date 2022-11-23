@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ShareMe!</title>
+        <link rel="stylesheet" href="./style.css" />
+        <script src="./main.js" type="module"></script>
+    </head>
+    <body>
+        <main>
+            <textarea id="$textarea" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off">
+            </textarea>
+        </main>
+        <footer>
+            <p style="user-select: all"><a id="$a"></a></p>
+            <p style="user-select: none"><span id="$info" class="red">offline</span></p>
+        </footer>
+    </body>
+    <script>
+        document.getElementById("$a").innerHTML = window.location.href.replace(/http(s?):\/\//g, "");
+        document.getElementById("$a").href = window.location.href;
+        document.getElementById("$textarea").disabled = true;
+    </script>
+</html>
