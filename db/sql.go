@@ -11,11 +11,6 @@ type mysql_db struct {
 	tableName string
 }
 
-type namespace_table struct {
-	Namespace string `json:"namespace"`
-	Data      string `json:"data"`
-}
-
 func (this mysql_db) Get(namespace string) (content string, err error) {
 	DB := this.db
 	rows, err := DB.Query("SELECT data FROM "+this.tableName+" WHERE namespace=?", namespace)

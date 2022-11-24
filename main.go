@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	"os"
 	"shareme/db"
-	"shareme/route"
+	"shareme/routes"
 )
 
 func isSet(str ...string) bool {
@@ -35,9 +35,10 @@ var efs embed.FS
 
 func main() {
 	gin.SetMode(gin.ReleaseMode)
-
-	gin := gin.New()
-	gin.SetTrustedProxies([]string{"192.168.1.1"})
+	app := gin.New()
+	app.SetTrustedProxies([]string{"192.168.1.1"})
+	
+	// config database
 	godotenv.Load()
 	MONGO_DB_URI := getEnv("MONGO_DB_URI")
 	MONGO_DB_NAME := getEnv("MONGO_DB_NAME")
@@ -61,9 +62,11 @@ func main() {
 		database = db.TmpDB()
 	}
 
-	route.APIMiddleware(gin, database)
-	route.StaticMiddleware(gin, database, efs)
+	// attach middleware
+	routes.APIMiddleware(app, database)
+	routes.StaticMiddleware(app, database, efs)
+	/// config port
 	port := getEnv("PORT", "8080")
 	fmt.Println("Server listen at http://localhost:" + port)
-	gin.Run(":" + port)
+	app.Run(":" + port)
 }
