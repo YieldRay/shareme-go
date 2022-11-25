@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/gin-gonic/gin"
 	"regexp"
 	"strings"
 )
@@ -12,9 +13,16 @@ func isNamespaceValid(namespace string) bool {
 
 // check the UA
 func notBrowser(ua string) bool {
-	if strings.Index(ua, "curl") == 0 {
+	if strings.HasPrefix(ua, "curl") {
 		return true
 	}
+	if strings.HasPrefix(ua, "Mozilla") {
+		return false
+	}
+	if len(ua) < 10 {
+		return true
+	}
+
 	return false
 }
 
@@ -27,8 +35,7 @@ func contains(slice []string, s string) bool {
 	return false
 }
 
-
-func getContentType(name string) string {
+func getMimeType(name string) string {
 	if strings.HasSuffix(name, ".js") {
 		return "application/javascript"
 	}
@@ -36,4 +43,18 @@ func getContentType(name string) string {
 		return "text/css"
 	}
 	return ""
+}
+
+func getOrigin(c *gin.Context) string {
+	if host := c.Request.Host; len(host) > 0 {
+		scheme := c.Request.URL.Scheme
+		if len(scheme) == 0 {
+			scheme = "http"
+		}
+		return scheme + "://" + host
+	}
+	if origin := c.Request.Header.Get("Origin"); len(origin) > 0 {
+		return origin
+	}
+	return "${domain}"
 }

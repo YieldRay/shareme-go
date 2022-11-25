@@ -1,10 +1,11 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"io/fs"
 	"net/http"
 	"shareme/db"
+
+	"github.com/gin-gonic/gin"
 )
 
 func StaticMiddleware(g *gin.Engine, db db.IDB, efs fs.FS) {
@@ -14,7 +15,7 @@ func StaticMiddleware(g *gin.Engine, db db.IDB, efs fs.FS) {
 	}
 	sendFile := func(ctx *gin.Context, name string) {
 		if buf := readFile(name); len(buf) > 0 {
-			ct := getContentType(name)
+			ct := getMimeType(name)
 			if len(ct) == 0 {
 				ct = http.DetectContentType(buf)
 			}
@@ -25,11 +26,23 @@ func StaticMiddleware(g *gin.Engine, db db.IDB, efs fs.FS) {
 	}
 
 	g.GET("/", func(ctx *gin.Context) {
-		sendFile(ctx, "index.html")
+		ua := ctx.Request.UserAgent()
+		origin := getOrigin(ctx)
+
+		if notBrowser(ua) {
+			ctx.String(http.StatusOK, `Usage:
+(replace ':namespace' with a namespace you want)
+$ curl %s/:namespace                                             
+$ curl %s/:namespace -d t=any_thing_you_want_to_store`,
+				origin, origin,
+			)
+		} else {
+			sendFile(ctx, "index.html")
+		}
 	})
 
 	g.GET("/:namespace", func(ctx *gin.Context) {
-		ua := ctx.Request.Header.Get("user-agent")
+		ua := ctx.Request.UserAgent()
 		if notBrowser(ua) {
 			namespace, isNamespaceValid := getNamespace(ctx)
 			if !isNamespaceValid {

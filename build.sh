@@ -4,7 +4,12 @@ bin="shareme.exe"
 
 if [ "$1" == "c" ]; then
     go build -ldflags "-s -w" -o $bin
-    upx -9 $bin
+    upx --best $bin
+fi
+
+if [ "$1" == "b" ]; then
+    go build -ldflags "-s -w" -o $bin
+    upx --brute $bin
 fi
 
 if [ "$1" == "d" ]; then
