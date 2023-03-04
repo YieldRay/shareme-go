@@ -19,10 +19,10 @@ MYSQL_DB_NAME=database_name
 MYSQL_TABLE_NAME=table_name
 
 # Use MongoDB
-MONGO_DB_URI=mongodb+srv://username:password@host
-MONGO_DB_NAME=database_name
-MONGO_DB_COLLECTION=collection_name
+MONGODB_URI=mongodb+srv://username:password@host
+MONGODB_NAME=database_name
+MONGODB_COLLECTION=collection_name
 ```
 
-If no database is specified, the program use memory to store data,  
+If no database is specified, the program will use memory to store data,  
 which means all the data will disappear after the program's shutdown

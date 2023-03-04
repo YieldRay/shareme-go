@@ -1,16 +1,15 @@
 package routes
 
 import (
+	"github.com/gin-gonic/gin"
 	"io/fs"
 	"net/http"
 	"shareme/db"
-
-	"github.com/gin-gonic/gin"
 )
 
 func StaticMiddleware(g *gin.Engine, db db.IDB, efs fs.FS) {
 	readFile := func(name string) []byte {
-		f, _ := fs.ReadFile(efs, "public/"+name)
+		f, _ := fs.ReadFile(efs, name)
 		return f
 	}
 	sendFile := func(ctx *gin.Context, name string) {

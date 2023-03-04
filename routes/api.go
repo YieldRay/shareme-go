@@ -16,7 +16,7 @@ func getNamespace(ctx *gin.Context) (namespace string, ok bool) {
 		return namespace, false
 	}
 	if !isNamespaceValid(namespace) {
-		ctx.String(http.StatusBadRequest, `[ShareMe]: Namespace is invalid, is can only contains letters and numbers`)
+		ctx.String(http.StatusBadRequest, `[ShareMe]: namespace is invalid, it can only contains letters and numbers`)
 		return "", false
 	}
 	return namespace, true
@@ -26,7 +26,7 @@ func getNamespace(ctx *gin.Context) (namespace string, ok bool) {
 func respondGetNamespace(ctx *gin.Context, namespace string, db db.IDB) {
 	content, err := db.Get(namespace)
 	if err != nil {
-		ctx.String(http.StatusInternalServerError, `[ShareMe]: Server failed to load data`)
+		ctx.String(http.StatusInternalServerError, `[ShareMe]: server failed to load data`)
 	} else {
 		ctx.String(http.StatusOK, content)
 	}
@@ -34,34 +34,44 @@ func respondGetNamespace(ctx *gin.Context, namespace string, db db.IDB) {
 
 func getPostValue(c *gin.Context) (content string, err error) {
 	ct := strings.ToLower(c.ContentType())
-	if strings.Contains(ct, "application/json") { // for json
-		var data []byte
-		data, err = c.GetRawData()
-		var body map[string]string
-		err = json.Unmarshal(data, &body)
 
-		keys := make([]string, 0, len(body))
-		for k := range body {
-			keys = append(keys, k)
-		}
+	switch {
+	// for json
+	case strings.Contains(ct, "application/json"):
+		{
+			var data []byte
+			data, err = c.GetRawData()
+			var body map[string]string
+			err = json.Unmarshal(data, &body)
 
-		if contains(keys, "t") {
-			content = body["t"]
-		} else {
-			err = errors.New("json body has no `t`, just send content from db")
+			keys := make([]string, 0, len(body))
+			for k := range body {
+				keys = append(keys, k)
+			}
+
+			if contains(keys, "t") {
+				content = body["t"]
+			} else {
+				err = errors.New("json body has no `t`, just send content from db")
+			}
+			return
 		}
-		return
+	// for x-www-form-urlencoded
+	case strings.Contains(ct, "application/x-www-form-urlencoded"):
+		{
+			var has bool
+			content, has = c.GetPostForm("t")
+			if !has {
+				err = errors.New("form body has no `t`, just send content from db")
+			}
+			return
+		}
+	// error
+	default:
+		{
+			return "", errors.New("content-type is not set or can not be recognized")
+		}
 	}
-	if strings.Contains(ct, "application/x-www-form-urlencoded") { // for x-www-form-urlencoded
-		var has bool
-		content, has = c.GetPostForm("t")
-		if !has {
-			err = errors.New("form body has no `t`, just send content from db")
-		}
-		return
-	}
-
-	return "", errors.New("content-type is not set or can be recognized")
 }
 
 func APIMiddleware(g *gin.Engine, db db.IDB) {
@@ -78,9 +88,9 @@ func APIMiddleware(g *gin.Engine, db db.IDB) {
 		} else {
 			// set to db
 			if db.Set(namespace, content) {
-				ctx.String(http.StatusOK, `[ShareMe]: Ok`)
+				ctx.String(http.StatusOK, `[ShareMe]: ok`)
 			} else {
-				ctx.String(http.StatusInternalServerError, `[ShareMe]: Server failed to save data`)
+				ctx.String(http.StatusInternalServerError, `[ShareMe]: server failed to save data`)
 			}
 		}
 	})

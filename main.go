@@ -1,12 +1,12 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"os"
 	"shareme/db"
+	. "shareme/public"
 	"shareme/routes"
 )
 
@@ -30,19 +30,18 @@ func getEnv(key string, defaults ...string) string {
 	return e
 }
 
-//go:embed public/*
-var efs embed.FS
-
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.New()
 	app.SetTrustedProxies([]string{"192.168.1.1"})
-	
+
+	// attach static
+	efs := Public
 	// config database
 	godotenv.Load()
-	MONGO_DB_URI := getEnv("MONGO_DB_URI")
-	MONGO_DB_NAME := getEnv("MONGO_DB_NAME")
-	MONGO_DB_COLLECTION := getEnv("MONGO_DB_COLLECTION")
+	MONGODB_URI := getEnv("MONGODB_URI")
+	MONGODB_NAME := getEnv("MONGODB_NAME")
+	MONGODB_COLLECTION := getEnv("MONGODB_COLLECTION")
 	MYSQL_USERNAME := getEnv("MYSQL_USERNAME")
 	MYSQL_PASSWORD := getEnv("MYSQL_PASSWORD")
 	MYSQL_HOST := getEnv("MYSQL_HOST", "127.0.0.1")
@@ -51,9 +50,9 @@ func main() {
 	MYSQL_TABLE_NAME := getEnv("MYSQL_TABLE_NAME")
 
 	var database db.IDB
-	if isSet(MONGO_DB_URI, MONGO_DB_NAME, MONGO_DB_COLLECTION) {
+	if isSet(MONGODB_URI, MONGODB_NAME, MONGODB_COLLECTION) {
 		fmt.Println("Using MongoDB")
-		database = db.MongoDB(MONGO_DB_URI, MONGO_DB_NAME, MONGO_DB_COLLECTION)
+		database = db.MongoDB(MONGODB_URI, MONGODB_NAME, MONGODB_COLLECTION)
 	} else if isSet(MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT, MYSQL_DB_NAME, MYSQL_TABLE_NAME) {
 		fmt.Println("Using MySQL")
 		database = db.MySQL(MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT, MYSQL_DB_NAME, MYSQL_TABLE_NAME)
