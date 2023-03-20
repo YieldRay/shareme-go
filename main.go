@@ -48,6 +48,8 @@ func main() {
 	MYSQL_PORT := getEnv("MYSQL_PORT", "3306")
 	MYSQL_DB_NAME := getEnv("MYSQL_DB_NAME")
 	MYSQL_TABLE_NAME := getEnv("MYSQL_TABLE_NAME")
+	DETA_PROJECT_KEY := getEnv("DETA_PROJECT_KEY")
+	DETA_BASE_NAME := getEnv("DETA_BASE_NAME", "ShareMe")
 
 	var database db.IDB
 	if isSet(MONGODB_URI, MONGODB_NAME, MONGODB_COLLECTION) {
@@ -56,6 +58,9 @@ func main() {
 	} else if isSet(MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT, MYSQL_DB_NAME, MYSQL_TABLE_NAME) {
 		fmt.Println("Using MySQL")
 		database = db.MySQL(MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT, MYSQL_DB_NAME, MYSQL_TABLE_NAME)
+	} else if isSet(DETA_PROJECT_KEY) {
+		fmt.Println("Using Deta Base")
+		database = db.Deta(DETA_PROJECT_KEY, DETA_BASE_NAME)
 	} else {
 		fmt.Println("Using TMP Cache")
 		database = db.TmpDB()

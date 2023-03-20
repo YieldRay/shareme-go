@@ -36,10 +36,7 @@ func (this mongodb) Set(namespace, content string) bool {
 		options.Update().SetUpsert(true),
 	)
 
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func MongoDB(srv, dbName, colName string) (db IDB) {
@@ -48,7 +45,7 @@ func MongoDB(srv, dbName, colName string) (db IDB) {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	coll := client.Database(dbName).Collection(colName)
 	return mongodb{coll}
 

@@ -10,6 +10,10 @@ ShareMe, written in Go
 # Default port is 8080
 PORT=3000
 
+# Use Deta Base (no need to configure in deta)
+DETA_PROJECT_KEY=projectid_secretkey
+DETA_BASE_NAME=(leave blank to use ShareMe)
+
 # Use MySQL
 MYSQL_USERNAME=root
 MYSQL_PASSWORD=password

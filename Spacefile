@@ -1,0 +1,13 @@
+v: 0
+micros:
+    - name: shareme
+      src: .
+      engine: custom
+      commands:
+          - go get
+          - go build main.go
+      run: ./main
+      include:
+          - main
+      public_routes:
+          - /*

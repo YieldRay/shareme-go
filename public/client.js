@@ -9,7 +9,7 @@ class ShareMe {
         try {
             const url = new URL(this.server);
             url.pathname = `/${namespace}`;
-            const resp = await fetch(url.toString(), {
+            const resp = await fetch(url, {
                 method: "POST",
                 // use POST with no body to get data
             });
@@ -26,7 +26,7 @@ class ShareMe {
         try {
             const url = new URL(this.server);
             url.pathname = `/${namespace}`;
-            const resp = await fetch(url.toString(), {
+            const resp = await fetch(url, {
                 method: "POST",
                 body: JSON.stringify({ t }),
                 headers: {
@@ -35,7 +35,7 @@ class ShareMe {
             });
             if (!resp.ok) return false;
             return true;
-        } catch (_e) {
+        } catch (_) {
             return false;
         }
     }
