@@ -1,4 +1,5 @@
 v: 0
+icon: ./public/icon.png
 micros:
     - name: shareme
       src: .
