@@ -4,6 +4,11 @@
 .green {
     color: green;
 }
+
+.blue {
+    color: blue;
+}
+
 * {
     box-sizing: border-box;
 }

@@ -36,7 +36,7 @@ $ curl ${location.origin}/:namespace -d t=any_thing_you_want_to_store
     "color: #66ccff; font-size: 16px; padding: 2px;"
 );
 
-// Forbid invalid namespace
+// forbid invalid namespace
 const namespace = window.location.pathname.slice(1);
 if (!isNamespaceValid(namespace)) location.pathname = generateRandomString();
 
@@ -48,6 +48,7 @@ function generateRandomString(length = 4) {
 }
 
 async function updateFromServer($textarea, $info) {
+    $info.className = "blue";
     $textarea.disabled = true;
     const data = await app.get(namespace);
     $textarea.disabled = false;
@@ -62,6 +63,7 @@ async function updateFromServer($textarea, $info) {
 }
 
 async function updateToServer($textarea, $info) {
+    $info.className = "blue";
     const data = $textarea.value;
     const success = await app.set(namespace, data);
     $info.className = success ? "green" : "red";
@@ -81,7 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const $info = document.getElementById("$info");
     updateFromServer($textarea, $info);
     $info.addEventListener("click", () => updateFromServer($textarea, $info));
-    $info.style.cursor = "pointer";
     $textarea.addEventListener(
         "input",
         debounce(() => updateToServer($textarea, $info), 1000)
